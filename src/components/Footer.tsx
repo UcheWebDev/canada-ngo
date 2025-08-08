@@ -1,5 +1,5 @@
-import { Heart, Mail, Phone, MapPin } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Heart, Mail, Phone, MapPin } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const Footer = () => {
   return (
@@ -13,8 +13,9 @@ const Footer = () => {
               <span className="font-bold text-xl">Neil Sedaka Foundation</span>
             </div>
             <p className="text-white/80 mb-4 max-w-md">
-              Bringing education, clean water, and healthcare to African children. 
-              Together, we can build a brighter future for the next generation.
+              Bringing education, clean water, and healthcare to African
+              children. Together, we can build a brighter future for the next
+              generation.
             </p>
           </div>
 
@@ -22,10 +23,38 @@ const Footer = () => {
           <div>
             <h3 className="font-semibold mb-4">Quick Links</h3>
             <ul className="space-y-2">
-              <li><Link to="/" className="text-white/80 hover:text-hope transition-colors">Home</Link></li>
-              <li><Link to="/about" className="text-white/80 hover:text-hope transition-colors">About</Link></li>
-              <li><Link to="/contact" className="text-white/80 hover:text-hope transition-colors">Contact</Link></li>
-              <li><Link to="/donate" className="text-white/80 hover:text-hope transition-colors">Donate</Link></li>
+              <li>
+                <Link
+                  to="/"
+                  className="text-white/80 hover:text-hope transition-colors"
+                >
+                  Home
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/about"
+                  className="text-white/80 hover:text-hope transition-colors"
+                >
+                  About
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/contact"
+                  className="text-white/80 hover:text-hope transition-colors"
+                >
+                  Contact
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/donate"
+                  className="text-white/80 hover:text-hope transition-colors"
+                >
+                  Donate
+                </Link>
+              </li>
             </ul>
           </div>
 
@@ -43,7 +72,9 @@ const Footer = () => {
               </div>
               <div className="flex items-center space-x-2">
                 <MapPin className="h-4 w-4" />
-                <span className="text-sm">New York, NY</span>
+                <span className="text-sm">
+                  585 Stewart Ave Garden City, NY 11530-4783 United States
+                </span>
               </div>
             </div>
           </div>
@@ -51,7 +82,8 @@ const Footer = () => {
 
         <div className="border-t border-white/20 mt-8 pt-8 text-center">
           <p className="text-white/60">
-            © 2024 Neil Sedaka Foundation. All rights reserved. Making a difference, one child at a time.
+            © 2024 Neil Sedaka Foundation. All rights reserved. Making a
+            difference, one child at a time.
           </p>
         </div>
       </div>

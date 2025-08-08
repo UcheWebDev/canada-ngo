@@ -13,6 +13,10 @@ import projectWell from '@/assets/project-well.jpg';
 import projectClinic from '@/assets/project-clinic.jpg';
 import teacherClassroom from '@/assets/teacher-classroom.jpg';
 import techEducation from '@/assets/tech-education.jpg';
+import communityCentered from '@/assets/Gemini_Generated_Image_ox9cdyox9cdyox9c (2).png';
+import globalImpact from '@/assets/Gemini_Generated_Image_ox9cdyox9cdyox9c.png';
+import resultsDriven from '@/assets/Gemini_Generated_Image_9pegcs9pegcs9peg.png';
+import provenExcellence from '@/assets/Gemini_Generated_Image_gwfvpgwfvpgwfvpg.png';
 
 const Index = () => {
   const stats = [
@@ -73,6 +77,29 @@ const Index = () => {
     },
   ];
 
+  const foundationValues = [
+    {
+      title: 'Community-Centered',
+      description: 'We work alongside communities, not for them, ensuring sustainable local ownership',
+      image: communityCentered
+    },
+    {
+      title: 'Global Impact',
+      description: 'Operating across 25+ countries with ongoing global expansion',
+      image: globalImpact
+    },
+    {
+      title: 'Results-Driven',
+      description: '100% of donations go directly to programs with transparent impact reporting',
+      image: resultsDriven
+    },
+    {
+      title: 'Proven Excellence',
+      description: '9 years of measurable global impact with international recognition and awards',
+      image: provenExcellence
+    }
+  ];
+
   return (
     <div className="min-h-screen">
       <Navbar />
@@ -117,53 +144,19 @@ const Index = () => {
             </div>
 
             <div className="grid grid-cols-2 gap-6">
-              <Card className="text-center border-0 shadow-soft bg-gradient-to-br from-card to-primary/5">
-                <CardHeader>
-                  <div className="w-16 h-16 mx-auto mb-4 bg-primary rounded-full flex items-center justify-center">
-                    <Users className="h-8 w-8 text-primary-foreground" />
+              {foundationValues.map((value, index) => (
+                <div key={index} className="relative rounded-2xl overflow-hidden shadow-soft hover:shadow-warm transition-all duration-300">
+                  <img 
+                    src={value.image} 
+                    alt={value.title}
+                    className="w-full h-48 object-cover"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent flex flex-col justify-end p-4">
+                    {/* <h4 className="text-white font-bold text-lg mb-2">{value.title}</h4> */}
+                    {/* <p className="text-white/90 text-sm leading-relaxed">{value.description}</p> */}
                   </div>
-                  <CardTitle className="text-xl">Community-Centered</CardTitle>
-                  <CardDescription>
-                    We work alongside communities, not for them, ensuring sustainable local ownership
-                  </CardDescription>
-                </CardHeader>
-              </Card>
-
-              <Card className="text-center border-0 shadow-soft bg-gradient-to-br from-card to-secondary/5">
-                <CardHeader>
-                  <div className="w-16 h-16 mx-auto mb-4 bg-secondary rounded-full flex items-center justify-center">
-                    <Globe className="h-8 w-8 text-secondary-foreground" />
-                  </div>
-                  <CardTitle className="text-xl">Global Impact</CardTitle>
-                  <CardDescription>
-                    Operating across 25+ countries with ongoing global expansion
-                  </CardDescription>
-                </CardHeader>
-              </Card>
-
-              <Card className="text-center border-0 shadow-soft bg-gradient-to-br from-card to-accent/5">
-                <CardHeader>
-                  <div className="w-16 h-16 mx-auto mb-4 bg-accent rounded-full flex items-center justify-center">
-                    <Target className="h-8 w-8 text-accent-foreground" />
-                  </div>
-                  <CardTitle className="text-xl">Results-Driven</CardTitle>
-                  <CardDescription>
-                    100% of donations go directly to programs with transparent impact reporting
-                  </CardDescription>
-                </CardHeader>
-              </Card>
-
-              <Card className="text-center border-0 shadow-soft bg-gradient-to-br from-card to-growth/10">
-                <CardHeader>
-                  <div className="w-16 h-16 mx-auto mb-4 bg-growth rounded-full flex items-center justify-center">
-                    <Award className="h-8 w-8 text-white" />
-                  </div>
-                  <CardTitle className="text-xl">Proven Excellence</CardTitle>
-                  <CardDescription>
-                    9 years of measurable global impact with international recognition and awards
-                  </CardDescription>
-                </CardHeader>
-              </Card>
+                </div>
+              ))}
             </div>
           </div>
 
@@ -360,7 +353,7 @@ const Index = () => {
                 Start Donating <ArrowRight className="ml-2 h-5 w-5" />
               </Link>
             </Button>
-            <Button asChild variant="outline" size="lg" className="text-lg px-8 py-4 border-white text-white hover:bg-white hover:text-primary">
+            <Button asChild variant="outline" size="lg" className="text-lg px-8 py-4 border-white text-primary hover:bg-white hover:text-primary">
               <Link to="/contact">Get Involved</Link>
             </Button>
           </div>

@@ -1,25 +1,27 @@
-import { useState } from 'react';
-import Navbar from '@/components/Navbar';
-import Footer from '@/components/Footer';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { useToast } from '@/hooks/use-toast';
-import { Mail, Phone, MapPin } from 'lucide-react';
+import { useState } from "react";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { useToast } from "@/hooks/use-toast";
+import { Mail, Phone, MapPin } from "lucide-react";
 
 const Contact = () => {
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    subject: '',
-    message: ''
+    name: "",
+    email: "",
+    subject: "",
+    message: "",
   });
   const { toast } = useToast();
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
     });
   };
 
@@ -29,13 +31,13 @@ const Contact = () => {
       title: "Message sent!",
       description: "Thank you for contacting us. We'll get back to you soon.",
     });
-    setFormData({ name: '', email: '', subject: '', message: '' });
+    setFormData({ name: "", email: "", subject: "", message: "" });
   };
 
   return (
     <div className="min-h-screen">
       <Navbar />
-      
+
       {/* Hero Section */}
       <section className="pt-24 pb-16 bg-gradient-to-br from-primary/10 to-accent/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
@@ -43,8 +45,8 @@ const Contact = () => {
             Contact Us
           </h1>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-            Have questions about our work or want to get involved? 
-            We'd love to hear from you and discuss how we can work together.
+            Have questions about our work or want to get involved? We'd love to
+            hear from you and discuss how we can work together.
           </p>
         </div>
       </section>
@@ -55,11 +57,16 @@ const Contact = () => {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
             {/* Contact Form */}
             <div className="bg-card rounded-2xl p-8 shadow-soft">
-              <h2 className="text-2xl font-bold text-foreground mb-6">Send us a message</h2>
+              <h2 className="text-2xl font-bold text-foreground mb-6">
+                Send us a message
+              </h2>
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label htmlFor="name" className="block text-sm font-medium text-foreground mb-2">
+                    <label
+                      htmlFor="name"
+                      className="block text-sm font-medium text-foreground mb-2"
+                    >
                       Full Name
                     </label>
                     <Input
@@ -73,7 +80,10 @@ const Contact = () => {
                     />
                   </div>
                   <div>
-                    <label htmlFor="email" className="block text-sm font-medium text-foreground mb-2">
+                    <label
+                      htmlFor="email"
+                      className="block text-sm font-medium text-foreground mb-2"
+                    >
                       Email Address
                     </label>
                     <Input
@@ -87,9 +97,12 @@ const Contact = () => {
                     />
                   </div>
                 </div>
-                
+
                 <div>
-                  <label htmlFor="subject" className="block text-sm font-medium text-foreground mb-2">
+                  <label
+                    htmlFor="subject"
+                    className="block text-sm font-medium text-foreground mb-2"
+                  >
                     Subject
                   </label>
                   <Input
@@ -102,9 +115,12 @@ const Contact = () => {
                     className="w-full"
                   />
                 </div>
-                
+
                 <div>
-                  <label htmlFor="message" className="block text-sm font-medium text-foreground mb-2">
+                  <label
+                    htmlFor="message"
+                    className="block text-sm font-medium text-foreground mb-2"
+                  >
                     Message
                   </label>
                   <Textarea
@@ -117,7 +133,7 @@ const Contact = () => {
                     className="w-full"
                   />
                 </div>
-                
+
                 <Button type="submit" className="w-full">
                   Send Message
                 </Button>
@@ -127,10 +143,13 @@ const Contact = () => {
             {/* Contact Information */}
             <div className="space-y-8">
               <div>
-                <h2 className="text-2xl font-bold text-foreground mb-6">Get in touch</h2>
+                <h2 className="text-2xl font-bold text-foreground mb-6">
+                  Get in touch
+                </h2>
                 <p className="text-muted-foreground mb-8">
-                  Whether you're interested in volunteering, making a donation, or learning more 
-                  about our programs, we're here to help and answer any questions you might have.
+                  Whether you're interested in volunteering, making a donation,
+                  or learning more about our programs, we're here to help and
+                  answer any questions you might have.
                 </p>
               </div>
 
@@ -142,8 +161,12 @@ const Contact = () => {
                   </div>
                   <div>
                     <h3 className="font-semibold text-foreground">Email</h3>
-                    <p className="text-muted-foreground">info@neilsedakafoundation.org</p>
-                    <p className="text-muted-foreground">partnerships@neilsedakafoundation.org</p>
+                    <p className="text-muted-foreground">
+                      info@neilsedakafoundation.org
+                    </p>
+                    <p className="text-muted-foreground">
+                      partnerships@neilsedakafoundation.org
+                    </p>
                   </div>
                 </div>
 
@@ -164,15 +187,22 @@ const Contact = () => {
                   </div>
                   <div>
                     <h3 className="font-semibold text-foreground">Office</h3>
-                    <p className="text-muted-foreground">123 Hope Street</p>
-                    <p className="text-muted-foreground">New York, NY 10001</p>
+                    <p className="text-muted-foreground">585 Stewart Ave</p>
+                    <p className="text-muted-foreground">
+                      Garden City, NY 11530-4783
+                    </p>
+                     <p className="text-muted-foreground">
+                     United States
+                    </p>
                   </div>
                 </div>
               </div>
 
               {/* Office Hours */}
               <div className="bg-muted/50 rounded-xl p-6">
-                <h3 className="font-semibold text-foreground mb-4">Office Hours</h3>
+                <h3 className="font-semibold text-foreground mb-4">
+                  Office Hours
+                </h3>
                 <div className="space-y-2 text-muted-foreground">
                   <p>Monday - Friday: 9:00 AM - 6:00 PM</p>
                   <p>Saturday: 10:00 AM - 4:00 PM</p>
