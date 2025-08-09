@@ -7,11 +7,16 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { AlertDialog, AlertDialogAction, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
-import { GraduationCap, Droplets, Heart, Check, CreditCard, Building2, Upload, ChevronLeft, ChevronRight, CheckCircle, Mail, Calendar } from 'lucide-react';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { useToast } from '@/hooks/use-toast';
+import { GraduationCap, Droplets, Heart, Check, CreditCard, Building2, Upload, ChevronLeft, ChevronRight, CheckCircle, Mail, Calendar, AlertTriangle } from 'lucide-react';
 
 const Donate = () => {
+  const { toast } = useToast();
   const [currentStep, setCurrentStep] = useState(1);
   const [showSuccessDialog, setShowSuccessDialog] = useState(false);
+  const [showValidationDialog, setShowValidationDialog] = useState(false);
+  const [validationMessage, setValidationMessage] = useState('');
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -76,11 +81,28 @@ const Donate = () => {
     return formData.proofOfTransfer;
   };
 
+  const showValidationError = (message) => {
+    setValidationMessage(message);
+    setShowValidationDialog(true);
+  };
+
   const handleNextStep = () => {
     if (currentStep === 1 && !validateStep1()) {
-      alert('Please fill in all required fields');
+      const missingFields = [];
+      if (!formData.name) missingFields.push('Full Name');
+      if (!formData.email) missingFields.push('Email Address');
+      if (!formData.address) missingFields.push('Address');
+      if (!formData.amount) missingFields.push('Donation Amount');
+      
+      showValidationError(`Please fill in the following required fields: ${missingFields.join(', ')}`);
       return;
     }
+    
+    if (formData.amount && parseFloat(formData.amount) <= 0) {
+      showValidationError('Please enter a valid donation amount greater than $0');
+      return;
+    }
+    
     if (currentStep < 3) {
       setCurrentStep(currentStep + 1);
     }
@@ -94,12 +116,20 @@ const Donate = () => {
 
   const handleFinalSubmit = () => {
     if (!validateStep3()) {
-      alert('Please upload proof of transfer');
+      showValidationError('Please upload proof of your bank transfer before completing the donation.');
       return;
     }
     
-    console.log('Final donation submission:', formData);
-    setShowSuccessDialog(true);
+    toast({
+      title: "Processing your donation...",
+      description: "Please wait while we process your donation submission.",
+    });
+    
+    // Simulate processing
+    setTimeout(() => {
+      console.log('Final donation submission:', formData);
+      setShowSuccessDialog(true);
+    }, 1000);
   };
 
   const handleSuccessDialogClose = () => {
@@ -118,35 +148,85 @@ const Donate = () => {
   };
 
   const StepIndicator = () => (
-    <div className="flex items-center justify-center mb-8">
-      {steps.map((step, index) => (
-        <div key={step.number} className="flex items-center">
-          <div className={`flex items-center justify-center w-10 h-10 rounded-full border-2 
-            ${currentStep >= step.number 
-              ? 'bg-blue-500 border-blue-500 text-white' 
-              : 'bg-white border-gray-300 text-gray-500'
-            }`}>
-            {currentStep > step.number ? (
-              <Check className="w-5 h-5" />
-            ) : (
-              <span className="font-semibold">{step.number}</span>
+    <div className="mb-8">
+      {/* Mobile: Compact Horizontal Layout */}
+      <div className="md:hidden">
+        <div className="flex items-center justify-between px-4">
+          {steps.map((step, index) => (
+            <div key={step.number} className="flex flex-col items-center flex-1">
+              <div className={`flex items-center justify-center w-8 h-8 rounded-full border-2 mb-2
+                ${currentStep >= step.number 
+                  ? 'bg-blue-500 border-blue-500 text-white' 
+                  : 'bg-white border-gray-300 text-gray-500'
+                }`}>
+                {currentStep > step.number ? (
+                  <Check className="w-4 h-4" />
+                ) : (
+                  <span className="font-semibold text-xs">{step.number}</span>
+                )}
+              </div>
+              <div className="text-center">
+                <div className={`text-xs font-semibold ${
+                  currentStep >= step.number ? 'text-blue-600' : 'text-gray-500'
+                }`}>
+                  {step.title}
+                </div>
+              </div>
+              {/* Connecting line */}
+              {index < steps.length - 1 && (
+                <div className={`absolute top-4 w-full h-0.5 ${
+                  currentStep > step.number ? 'bg-blue-500' : 'bg-gray-300'
+                }`} 
+                style={{
+                  left: `${((index + 1) / steps.length) * 100}%`,
+                  width: `${(1 / steps.length) * 100}%`,
+                  zIndex: -1
+                }} />
+              )}
+            </div>
+          ))}
+        </div>
+        {/* Current step description */}
+        <div className="text-center mt-2">
+          <p className="text-sm text-gray-600">
+            {steps[currentStep - 1].description}
+          </p>
+        </div>
+      </div>
+
+      {/* Desktop: Full Horizontal Layout */}
+      <div className="hidden md:flex items-center justify-center">
+        {steps.map((step, index) => (
+          <div key={step.number} className="flex items-center">
+            <div className="flex flex-col items-center">
+              <div className={`flex items-center justify-center w-10 h-10 rounded-full border-2 
+                ${currentStep >= step.number 
+                  ? 'bg-blue-500 border-blue-500 text-white' 
+                  : 'bg-white border-gray-300 text-gray-500'
+                }`}>
+                {currentStep > step.number ? (
+                  <Check className="w-5 h-5" />
+                ) : (
+                  <span className="font-semibold">{step.number}</span>
+                )}
+              </div>
+              <div className="mt-2 text-center">
+                <div className={`text-sm font-semibold whitespace-nowrap ${
+                  currentStep >= step.number ? 'text-blue-600' : 'text-gray-500'
+                }`}>
+                  {step.title}
+                </div>
+                <div className="text-xs text-gray-400 whitespace-nowrap">{step.description}</div>
+              </div>
+            </div>
+            {index < steps.length - 1 && (
+              <div className={`w-16 lg:w-24 h-0.5 mx-4 ${
+                currentStep > step.number ? 'bg-blue-500' : 'bg-gray-300'
+              }`} />
             )}
           </div>
-          <div className="ml-3 text-left">
-            <div className={`text-sm font-semibold ${
-              currentStep >= step.number ? 'text-blue-600' : 'text-gray-500'
-            }`}>
-              {step.title}
-            </div>
-            <div className="text-xs text-gray-400">{step.description}</div>
-          </div>
-          {index < steps.length - 1 && (
-            <div className={`w-12 h-0.5 mx-4 ${
-              currentStep > step.number ? 'bg-blue-500' : 'bg-gray-300'
-            }`} />
-          )}
-        </div>
-      ))}
+        ))}
+      </div>
     </div>
   );
 
@@ -253,7 +333,7 @@ const Donate = () => {
                   <div>
                     <Label className="font-semibold text-gray-700">Account Name</Label>
                     <p className="text-gray-900 font-mono bg-gray-50 p-3 rounded border mt-1">
-                      Hope Foundation
+                      Neil Sedaka Foundation
                     </p>
                   </div>
                   <div>
@@ -458,7 +538,7 @@ const Donate = () => {
       {/* Trust Indicators */}
       <section className="py-16 bg-gray-50">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-2xl font-bold text-gray-900 mb-8">Why Donate to Hope Foundation?</h2>
+          <h2 className="text-2xl font-bold text-gray-900 mb-8">Why Donate to Neil Sedaka Foundation?</h2>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="space-y-4">
@@ -535,6 +615,33 @@ const Donate = () => {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Validation Dialog */}
+      <Dialog open={showValidationDialog} onOpenChange={setShowValidationDialog}>
+        <DialogContent className="max-w-md">
+          <DialogHeader className="text-center">
+            <div className="mx-auto mb-4 w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center">
+              <AlertTriangle className="w-8 h-8 text-orange-600" />
+            </div>
+            <DialogTitle className="text-xl text-orange-800">
+              Validation Error
+            </DialogTitle>
+            <DialogDescription className="text-center pt-2">
+              <p className="text-gray-600">
+                {validationMessage}
+              </p>
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="flex justify-center">
+            <Button 
+              onClick={() => setShowValidationDialog(false)}
+              className="px-8"
+            >
+              Got it
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
