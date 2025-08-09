@@ -2,9 +2,9 @@ import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { GraduationCap, Droplets, Heart, Users, Calendar, MapPin, Award } from 'lucide-react';
-import projectSchool from '@/assets/project-school.jpg';
-import projectWell from '@/assets/project-well.jpg';
-import projectClinic from '@/assets/project-clinic.jpg';
+import projectSchool from '@/assets/school (1).png';
+import projectWell from '@/assets/water.png';
+import projectClinic from '@/assets/health.png';
 import teacherClassroom from '@/assets/teacher-classroom.jpg';
 import techEducation from '@/assets/tech-education.jpg';
 

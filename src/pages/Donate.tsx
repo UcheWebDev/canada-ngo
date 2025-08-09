@@ -6,17 +6,20 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { GraduationCap, Droplets, Heart, Check, CreditCard, Building2 } from 'lucide-react';
+import { AlertDialog, AlertDialogAction, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
+import { GraduationCap, Droplets, Heart, Check, CreditCard, Building2, Upload, ChevronLeft, ChevronRight, CheckCircle, Mail, Calendar } from 'lucide-react';
 
 const Donate = () => {
-  const [showBankDetails, setShowBankDetails] = useState(false);
+  const [currentStep, setCurrentStep] = useState(1);
+  const [showSuccessDialog, setShowSuccessDialog] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     phone: '',
     address: '',
     amount: '',
-    message: ''
+    message: '',
+    proofOfTransfer: null
   });
 
   const impactAreas = [
@@ -43,6 +46,12 @@ const Donate = () => {
     },
   ];
 
+  const steps = [
+    { number: 1, title: 'Donor Details', description: 'Your information' },
+    { number: 2, title: 'Bank Transfer', description: 'Payment details' },
+    { number: 3, title: 'Upload Proof', description: 'Transfer confirmation' }
+  ];
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({
@@ -51,20 +60,300 @@ const Donate = () => {
     }));
   };
 
-  const handleSubmit = () => {
-    // Basic validation
-    if (!formData.name || !formData.email || !formData.address || !formData.amount) {
+  const handleFileUpload = (e) => {
+    const file = e.target.files[0];
+    setFormData(prev => ({
+      ...prev,
+      proofOfTransfer: file
+    }));
+  };
+
+  const validateStep1 = () => {
+    return formData.name && formData.email && formData.address && formData.amount;
+  };
+
+  const validateStep3 = () => {
+    return formData.proofOfTransfer;
+  };
+
+  const handleNextStep = () => {
+    if (currentStep === 1 && !validateStep1()) {
       alert('Please fill in all required fields');
       return;
     }
-    
-    console.log('Donation form submitted:', formData);
-    // Here you would typically send the data to your backend
-    alert('Thank you for your donation! Please proceed with the bank transfer using the details provided.');
+    if (currentStep < 3) {
+      setCurrentStep(currentStep + 1);
+    }
   };
 
-  const handleBankTransfer = () => {
-    setShowBankDetails(!showBankDetails);
+  const handlePrevStep = () => {
+    if (currentStep > 1) {
+      setCurrentStep(currentStep - 1);
+    }
+  };
+
+  const handleFinalSubmit = () => {
+    if (!validateStep3()) {
+      alert('Please upload proof of transfer');
+      return;
+    }
+    
+    console.log('Final donation submission:', formData);
+    setShowSuccessDialog(true);
+  };
+
+  const handleSuccessDialogClose = () => {
+    setShowSuccessDialog(false);
+    // Reset form
+    setFormData({
+      name: '',
+      email: '',
+      phone: '',
+      address: '',
+      amount: '',
+      message: '',
+      proofOfTransfer: null
+    });
+    setCurrentStep(1);
+  };
+
+  const StepIndicator = () => (
+    <div className="flex items-center justify-center mb-8">
+      {steps.map((step, index) => (
+        <div key={step.number} className="flex items-center">
+          <div className={`flex items-center justify-center w-10 h-10 rounded-full border-2 
+            ${currentStep >= step.number 
+              ? 'bg-blue-500 border-blue-500 text-white' 
+              : 'bg-white border-gray-300 text-gray-500'
+            }`}>
+            {currentStep > step.number ? (
+              <Check className="w-5 h-5" />
+            ) : (
+              <span className="font-semibold">{step.number}</span>
+            )}
+          </div>
+          <div className="ml-3 text-left">
+            <div className={`text-sm font-semibold ${
+              currentStep >= step.number ? 'text-blue-600' : 'text-gray-500'
+            }`}>
+              {step.title}
+            </div>
+            <div className="text-xs text-gray-400">{step.description}</div>
+          </div>
+          {index < steps.length - 1 && (
+            <div className={`w-12 h-0.5 mx-4 ${
+              currentStep > step.number ? 'bg-blue-500' : 'bg-gray-300'
+            }`} />
+          )}
+        </div>
+      ))}
+    </div>
+  );
+
+  const renderStepContent = () => {
+    switch (currentStep) {
+      case 1:
+        return (
+          <Card className="shadow-lg">
+            <CardHeader>
+              <CardTitle className="text-2xl">Donor Information</CardTitle>
+              <CardDescription>
+                Please provide your details for the donation
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-6">
+                <div className="space-y-2">
+                  <Label htmlFor="name">Full Name *</Label>
+                  <Input
+                    id="name"
+                    name="name"
+                    value={formData.name}
+                    onChange={handleInputChange}
+                    placeholder="Enter your full name"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="email">Email Address *</Label>
+                  <Input
+                    id="email"
+                    name="email"
+                    type="email"
+                    value={formData.email}
+                    onChange={handleInputChange}
+                    placeholder="Enter your email"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="phone">Phone Number</Label>
+                  <Input
+                    id="phone"
+                    name="phone"
+                    value={formData.phone}
+                    onChange={handleInputChange}
+                    placeholder="Enter your phone number"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="address">Address *</Label>
+                  <Textarea
+                    id="address"
+                    name="address"
+                    value={formData.address}
+                    onChange={handleInputChange}
+                    placeholder="Enter your complete address"
+                    rows={3}
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="amount">Donation Amount ($) *</Label>
+                  <Input
+                    id="amount"
+                    name="amount"
+                    type="number"
+                    min="1"
+                    value={formData.amount}
+                    onChange={handleInputChange}
+                    placeholder="Enter donation amount"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="message">Message (Optional)</Label>
+                  <Textarea
+                    id="message"
+                    name="message"
+                    value={formData.message}
+                    onChange={handleInputChange}
+                    placeholder="Leave a message or dedication"
+                    rows={3}
+                  />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        );
+
+      case 2:
+        return (
+          <Card className="shadow-lg border-2 border-blue-200 bg-blue-50">
+            <CardHeader>
+              <CardTitle className="text-2xl text-blue-800">Bank Transfer Details</CardTitle>
+              <CardDescription>
+                Use these details to make your bank transfer for ${formData.amount}
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="bg-white p-6 rounded-lg border">
+                <div className="grid grid-cols-1 gap-4">
+                  <div>
+                    <Label className="font-semibold text-gray-700">Account Name</Label>
+                    <p className="text-gray-900 font-mono bg-gray-50 p-3 rounded border mt-1">
+                      Hope Foundation
+                    </p>
+                  </div>
+                  <div>
+                    <Label className="font-semibold text-gray-700">Bank Name</Label>
+                    <p className="text-gray-900 font-mono bg-gray-50 p-3 rounded border mt-1">
+                      First National Bank
+                    </p>
+                  </div>
+                  <div>
+                    <Label className="font-semibold text-gray-700">Account Number</Label>
+                    <p className="text-gray-900 font-mono bg-gray-50 p-3 rounded border mt-1">
+                      1234567890
+                    </p>
+                  </div>
+                  <div>
+                    <Label className="font-semibold text-gray-700">Routing Number</Label>
+                    <p className="text-gray-900 font-mono bg-gray-50 p-3 rounded border mt-1">
+                      021000021
+                    </p>
+                  </div>
+                  <div>
+                    <Label className="font-semibold text-gray-700">SWIFT Code</Label>
+                    <p className="text-gray-900 font-mono bg-gray-50 p-3 rounded border mt-1">
+                      FNBKUS33
+                    </p>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="bg-yellow-50 border border-yellow-200 rounded p-4">
+                <h4 className="font-semibold text-yellow-800 mb-2">Important Instructions:</h4>
+                <ul className="text-sm text-yellow-700 space-y-1">
+                  <li>• Transfer Amount: <strong>${formData.amount}</strong></li>
+                  <li>• Include your name "{formData.name}" in the transfer reference</li>
+                  <li>• Add "Donation" in the transfer description</li>
+                  <li>• After transfer, proceed to the next step to upload proof</li>
+                </ul>
+              </div>
+            </CardContent>
+          </Card>
+        );
+
+      case 3:
+        return (
+          <Card className="shadow-lg">
+            <CardHeader>
+              <CardTitle className="text-2xl">Upload Proof of Transfer</CardTitle>
+              <CardDescription>
+                Please upload a screenshot or receipt of your bank transfer
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-blue-400 transition-colors">
+                <Upload className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                <div className="space-y-2">
+                  <Label htmlFor="proof-upload" className="cursor-pointer">
+                    <span className="text-blue-600 font-semibold hover:text-blue-700">
+                      Click to upload file
+                    </span>
+                    <span className="text-gray-500"> or drag and drop</span>
+                  </Label>
+                  <Input
+                    id="proof-upload"
+                    type="file"
+                    accept="image/*,.pdf"
+                    onChange={handleFileUpload}
+                    className="hidden"
+                  />
+                  <p className="text-sm text-gray-500">
+                    Accepted formats: JPG, PNG, PDF (Max 10MB)
+                  </p>
+                </div>
+              </div>
+
+              {formData.proofOfTransfer && (
+                <div className="bg-green-50 border border-green-200 rounded p-4">
+                  <div className="flex items-center">
+                    <Check className="w-5 h-5 text-green-600 mr-2" />
+                    <span className="text-green-800 font-medium">File uploaded successfully:</span>
+                  </div>
+                  <p className="text-green-700 mt-1">{formData.proofOfTransfer.name}</p>
+                </div>
+              )}
+
+              <div className="bg-blue-50 border border-blue-200 rounded p-4">
+                <h4 className="font-semibold text-blue-800 mb-2">Donation Summary:</h4>
+                <div className="text-sm text-blue-700 space-y-1">
+                  <p><strong>Name:</strong> {formData.name}</p>
+                  <p><strong>Email:</strong> {formData.email}</p>
+                  <p><strong>Amount:</strong> ${formData.amount}</p>
+                  {formData.message && <p><strong>Message:</strong> {formData.message}</p>}
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        );
+
+      default:
+        return null;
+    }
   };
 
   return (
@@ -115,187 +404,51 @@ const Donate = () => {
         </div>
       </section>
 
-      {/* Donation Form */}
+      {/* Donation Form with Stepper */}
       <section className="py-16 bg-white">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              Donation Form
+              Donation Process
             </h2>
             <p className="text-xl text-gray-600">
-              Fill in your details to make a donation
+              Complete your donation in three simple steps
             </p>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-            {/* Form */}
-            <Card className="shadow-lg">
-              <CardHeader>
-                <CardTitle className="text-2xl">Donor Information</CardTitle>
-                <CardDescription>
-                  Please provide your details for the donation
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-6">
-                  <div className="space-y-2">
-                    <Label htmlFor="name">Full Name *</Label>
-                    <Input
-                      id="name"
-                      name="name"
-                      value={formData.name}
-                      onChange={handleInputChange}
-                      placeholder="Enter your full name"
-                    />
-                  </div>
+          <StepIndicator />
 
-                  <div className="space-y-2">
-                    <Label htmlFor="email">Email Address *</Label>
-                    <Input
-                      id="email"
-                      name="email"
-                      type="email"
-                      value={formData.email}
-                      onChange={handleInputChange}
-                      placeholder="Enter your email"
-                    />
-                  </div>
+          <div className="max-w-2xl mx-auto">
+            {renderStepContent()}
 
-                  <div className="space-y-2">
-                    <Label htmlFor="phone">Phone Number</Label>
-                    <Input
-                      id="phone"
-                      name="phone"
-                      value={formData.phone}
-                      onChange={handleInputChange}
-                      placeholder="Enter your phone number"
-                    />
-                  </div>
+            {/* Navigation Buttons */}
+            <div className="flex justify-between mt-8">
+              <Button
+                onClick={handlePrevStep}
+                variant="outline"
+                disabled={currentStep === 1}
+                className="flex items-center"
+              >
+                <ChevronLeft className="w-4 h-4 mr-2" />
+                Previous
+              </Button>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="address">Address *</Label>
-                    <Textarea
-                      id="address"
-                      name="address"
-                      value={formData.address}
-                      onChange={handleInputChange}
-                      placeholder="Enter your complete address"
-                      rows={3}
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="amount">Donation Amount ($) *</Label>
-                    <Input
-                      id="amount"
-                      name="amount"
-                      type="number"
-                      min="1"
-                      value={formData.amount}
-                      onChange={handleInputChange}
-                      placeholder="Enter donation amount"
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="message">Message (Optional)</Label>
-                    <Textarea
-                      id="message"
-                      name="message"
-                      value={formData.message}
-                      onChange={handleInputChange}
-                      placeholder="Leave a message or dedication"
-                      rows={3}
-                    />
-                  </div>
-
-                  <Button onClick={handleSubmit} className="w-full" size="lg">
-                    Submit Donation Details
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Payment Methods */}
-            <div className="space-y-6">
-              <Card className="shadow-lg">
-                <CardHeader>
-                  <CardTitle className="text-2xl">Payment Method</CardTitle>
-                  <CardDescription>
-                    Choose your preferred payment method
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    <Button
-                      onClick={handleBankTransfer}
-                      variant="outline"
-                      className="w-full h-16 text-left justify-start"
-                      size="lg"
-                    >
-                      <Building2 className="h-6 w-6 mr-3" />
-                      <div>
-                        <div className="font-semibold">Bank Transfer</div>
-                        <div className="text-sm text-gray-500">Direct bank transfer</div>
-                      </div>
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* Bank Details */}
-              {showBankDetails && (
-                <Card className="shadow-lg border-2 border-blue-200 bg-blue-50">
-                  <CardHeader>
-                    <CardTitle className="text-xl text-blue-800">Bank Transfer Details</CardTitle>
-                    <CardDescription>
-                      Use these details to make your bank transfer
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div className="grid grid-cols-1 gap-4">
-                      <div>
-                        <Label className="font-semibold text-gray-700">Account Name</Label>
-                        <p className="text-gray-900 font-mono bg-white p-2 rounded border">
-                          Hope Foundation
-                        </p>
-                      </div>
-                      <div>
-                        <Label className="font-semibold text-gray-700">Bank Name</Label>
-                        <p className="text-gray-900 font-mono bg-white p-2 rounded border">
-                          First National Bank
-                        </p>
-                      </div>
-                      <div>
-                        <Label className="font-semibold text-gray-700">Account Number</Label>
-                        <p className="text-gray-900 font-mono bg-white p-2 rounded border">
-                          1234567890
-                        </p>
-                      </div>
-                      <div>
-                        <Label className="font-semibold text-gray-700">Routing Number</Label>
-                        <p className="text-gray-900 font-mono bg-white p-2 rounded border">
-                          021000021
-                        </p>
-                      </div>
-                      <div>
-                        <Label className="font-semibold text-gray-700">SWIFT Code</Label>
-                        <p className="text-gray-900 font-mono bg-white p-2 rounded border">
-                          FNBKUS33
-                        </p>
-                      </div>
-                    </div>
-                    <div className="bg-yellow-50 border border-yellow-200 rounded p-4 mt-4">
-                      <h4 className="font-semibold text-yellow-800 mb-2">Important Notes:</h4>
-                      <ul className="text-sm text-yellow-700 space-y-1">
-                        <li>• Please include your name and "Donation" in the transfer reference</li>
-                        <li>• Email us at donations@hopefoundation.org after making the transfer</li>
-                        <li>• Include your donation form details in the email</li>
-                        <li>• You will receive a confirmation receipt within 24 hours</li>
-                      </ul>
-                    </div>
-                  </CardContent>
-                </Card>
+              {currentStep < 3 ? (
+                <Button
+                  onClick={handleNextStep}
+                  className="flex items-center"
+                >
+                  Next
+                  <ChevronRight className="w-4 h-4 ml-2" />
+                </Button>
+              ) : (
+                <Button
+                  onClick={handleFinalSubmit}
+                  className="flex items-center bg-green-600 hover:bg-green-700"
+                >
+                  <Check className="w-4 h-4 mr-2" />
+                  Complete Donation
+                </Button>
               )}
             </div>
           </div>
@@ -342,6 +495,46 @@ const Donate = () => {
       </section>
 
       <Footer />
+
+      {/* Success Dialog */}
+      <AlertDialog open={showSuccessDialog} onOpenChange={setShowSuccessDialog}>
+        <AlertDialogContent className="max-w-md">
+          <AlertDialogHeader className="text-center">
+            <div className="mx-auto mb-4 w-16 h-16 bg-green-100 rounded-full flex items-center justify-center">
+              <CheckCircle className="w-8 h-8 text-green-600" />
+            </div>
+            <AlertDialogTitle className="text-2xl text-green-800">
+              Donation Successful! 🎉
+            </AlertDialogTitle>
+            <AlertDialogDescription className="text-center space-y-3 pt-2">
+              <p className="text-gray-600">
+                Thank you for your generous donation of <span className="font-semibold text-green-600">${formData.amount}</span>!
+              </p>
+              <div className="bg-green-50 rounded-lg p-4 space-y-2">
+                <div className="flex items-center justify-center text-sm text-green-700">
+                  <Mail className="w-4 h-4 mr-2" />
+                  Confirmation email sent to {formData.email}
+                </div>
+                <div className="flex items-center justify-center text-sm text-green-700">
+                  <Calendar className="w-4 h-4 mr-2" />
+                  Processing within 24 hours
+                </div>
+              </div>
+              <p className="text-sm text-gray-500">
+                Your donation will make a real difference in children's lives. We'll keep you updated on the impact of your contribution.
+              </p>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter className="flex justify-center">
+            <AlertDialogAction 
+              onClick={handleSuccessDialogClose}
+              className="bg-green-600 hover:bg-green-700 px-8"
+            >
+              Continue
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };

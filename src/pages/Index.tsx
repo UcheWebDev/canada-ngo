@@ -8,9 +8,9 @@ import { GraduationCap, Droplets, Heart, ArrowRight, Users, Globe, Target, Award
 import heroEducation from '@/assets/hero-education.jpg';
 import heroWater from '@/assets/hero-water.jpg';
 import heroHealth from '@/assets/hero-health.jpg';
-import projectSchool from '@/assets/project-school.jpg';
+import projectSchool from '@/assets/school.png';
 import projectWell from '@/assets/project-well.jpg';
-import projectClinic from '@/assets/project-clinic.jpg';
+import projectClinic from '@/assets/unnamed.png';
 import teacherClassroom from '@/assets/teacher-classroom.jpg';
 import techEducation from '@/assets/tech-education.jpg';
 import communityCentered from '@/assets/Gemini_Generated_Image_ox9cdyox9cdyox9c (2).png';
@@ -39,7 +39,7 @@ const Index = () => {
       title: 'Global Clean Water Initiative',
       location: 'Developing Nations',
       description: 'Solar-powered water systems providing clean water to communities across multiple continents.',
-      image: projectWell,
+      image: resultsDriven,
       year: '2022',
       impact: '25,000+ people served daily'
     },
